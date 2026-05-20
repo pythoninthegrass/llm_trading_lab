@@ -263,8 +263,11 @@ STRICT RULE:
 # MAIN FUNCTION
 # -------------------------------------------------------------------
 
-def assemble_daily_prompt_skeleton(libb: LIBBmodel):
-   today = libb.run_date
+def create_starting_prompt():
+
+   # TODO: REPLACE WITH REAL DATE
+
+   today = pd.Timestamp("2026-05-18")
 
    macro_news = get_macro_news()
 
