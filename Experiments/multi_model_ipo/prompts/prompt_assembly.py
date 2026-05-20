@@ -4,9 +4,8 @@ from ..prompts.daily_prompt import *
 
 
 
-def create_deep_research_prompt(libb: LIBBmodel):
+def create_deep_research_prompt(skeleton: str, libb: LIBBmodel):
 
-    prompt_skeleton: str = assemble_deep_research_prompt_skeleton()
 
     today = libb.run_date
 
@@ -17,7 +16,7 @@ def create_deep_research_prompt(libb: LIBBmodel):
     if execution_log.empty:
         execution_log = "No recent trade logs."
 
-    prompt = prompt_skeleton.format(
+    prompt = skeleton.format(
         today=today,
         PORTFOLIO_STATE=portfolio_state,
         PORTFOLIO_TICKER_ELIGIBILITY=portfolio_tickers_eligibility,
@@ -26,9 +25,8 @@ def create_deep_research_prompt(libb: LIBBmodel):
 
     return prompt
 
-def create_daily_prompt(libb: LIBBmodel): 
+def create_daily_prompt(skeleton: str, libb: LIBBmodel): 
 
-    prompt_skeleton = assemble_daily_prompt_skeleton()
 
     today = libb.run_date
     portfolio_state = libb.portfolio
@@ -38,7 +36,7 @@ def create_daily_prompt(libb: LIBBmodel):
     if execution_log.empty:
         execution_log = "No recent trade logs."
 
-    prompt = prompt_skeleton.format(
+    prompt = skeleton.format(
             today=today,
             PORTFOLIO_STATE=portfolio_state,
             TRADE_EXECUTION_LOG=execution_log,

@@ -2,8 +2,7 @@ from openai import OpenAI
 import os
 import pandas as pd
 from datetime import datetime
-from ..prompts.deep_research_prompt import create_deep_research_prompt
-from ..prompts.daily_prompt import create_daily_prompt
+from ..prompts.prompt_assembly import *
 from ..prompts.starting_prompt import create_starting_prompt
 
 def prompt_deepseek(text: str, model: str = "deepseek-chat") -> str:
@@ -45,13 +44,13 @@ def prompt_chatgpt(text: str, model: str = "gpt-4.1-mini") -> str:
 
     return content
 
-def prompt_deep_research(libb) -> tuple[str, str]:
+def prompt_deep_research(skeleton, libb) -> tuple[str, str]:
     model = libb._model_path.replace("Experiments/multi_model_ipo/artifacts/", "")
-    # start date REPLACE
-    if str(libb.run_date) == "2026-01-28":
-        text = create_starting_prompt(libb)
+    # TODO: REPLACE 
+    if str(libb.run_date) == "2026-05-18":
+        text = create_starting_prompt()
     else:
-        text = create_deep_research_prompt(libb)
+        text = create_deep_research_prompt(skeleton, libb)
         
     if model == "deepseek":
         return prompt_deepseek(text), text
@@ -60,13 +59,13 @@ def prompt_deep_research(libb) -> tuple[str, str]:
     else:
         raise RuntimeError(f"Unidentified model: {model}")
 
-def prompt_daily_report(libb) -> tuple[str, str]:
+def prompt_daily_report(skeleton, libb) -> tuple[str, str]:
     model = libb._model_path.replace("Experiments/multi_model_ipo/artifacts/", "")
-        # start date REPLACE
-    if str(libb.run_date) == "2026-01-28":
-        text = create_starting_prompt(libb)
+    # TODO: REPLACE
+    if str(libb.run_date) == "2026-05-18":
+        text = create_starting_prompt()
     else:
-        text = create_daily_prompt(libb)
+        text = create_daily_prompt(skeleton, libb)
     if model == "deepseek":
         return prompt_deepseek(text), text
     elif model == "gpt-4.1":
