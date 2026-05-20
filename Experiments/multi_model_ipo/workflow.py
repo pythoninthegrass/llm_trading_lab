@@ -16,6 +16,8 @@ MODELS = ["deepseek", "gpt-4.1"]
 
 TODAY = pd.Timestamp.now().date()
 
+STARTING_DATE = pd.Timestamp("2026-05-20")
+
 def weekly_flow(date):
 
     prompt_skeleton = assemble_deep_research_prompt_skeleton()
@@ -83,7 +85,11 @@ def starting_flow(date):
 def main():
     day_num = TODAY.weekday()
 
-    if day_num  == 4: # Friday
+    if STARTING_DATE == TODAY:
+        print("Starting Date: Running Starting Work Flow...")
+        starting_flow(TODAY)
+
+    elif day_num  == 4: # Friday
         print("Friday: Running Weekly Flow...")
         weekly_flow(TODAY)
     else:
@@ -94,17 +100,22 @@ def main():
 def testing_main():
     # TODO: REPLACE FILLER DATE IN PROMPTS
     # TODO: ADD REAL DATE
-    start_date = pd.Timestamp("2026-05-18")
-    for i in range(1):
-        run_date = start_date + pd.Timedelta(days=i)    
+    for i in range(5):
+        run_date =  STARTING_DATE + pd.Timedelta(days=i)    
         day_num = run_date.weekday()
 
-        if day_num  == 4: # Friday
+        if run_date == STARTING_DATE:
+            print("Starting Date: Running Starting Work Flow...")
+            starting_flow(TODAY)
+
+        elif day_num  == 4: # Friday
             print("Friday: Running Weekly Flow...")
             weekly_flow(run_date)
+
         elif day_num < 4:
             print("Regular Weekday: Running Daily Flow...")
             daily_flow(run_date) # Mon-Thursday
+            
         else:  # Weekend (optional, LIBB will automatically skip weekends)
             print("Weekend: Skipping...")
         print("Success!")
