@@ -16,6 +16,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 from libb.execution.get_market_data import download_data_on_given_date
+from ..prompt_orchestration.get_prompt_data.fetching import fmp_endpoint
 
 TODAY = _dt.date.today()
 
@@ -767,33 +768,31 @@ def _get_ticker_snapshot(ticker: str) -> dict:
 
 def _calculate_market_cap(
     order: dict,
-    snapshot: dict,
 ) -> float:
-    direct_market_cap = snapshot.get("market_cap")
-    if isinstance(direct_market_cap, (int, float)):
-        return float(direct_market_cap)
+    
+    ticker = order.get("ticker")
 
-    shares = snapshot.get("shares_outstanding")
-    shares_f = _safe_float(shares) or 0.0
-    if shares_f <= 0:
+    if ticker is None:
         return 0.0
+    
+    share_count_data = fmp_endpoint("shares-float", ticker)
+    share_count = share_count_data["outstandingShares"]
 
     order_type = (order.get("order_type", "MARKET") or "MARKET").upper()
     limit_price = _safe_float(order.get("limit_price")) or 0.0
 
     if order_type == "LIMIT":
-        return shares_f * limit_price
+        return share_count * limit_price
 
-    price = _safe_float(snapshot.get("price"))
-    if price is None or price <= 0:
-        ticker = order.get("ticker")
+    # assume market
+    else:
         try:
             ticker_data = download_data_on_given_date(ticker, TODAY)
             price = _safe_float(ticker_data.get("Open"))
         except Exception:
             price = 0.0
 
-    return shares_f * float(price or 0.0)
+        return share_count * price
 
 
 def _get_rejection_reasons(
@@ -822,7 +821,7 @@ def _get_rejection_reasons(
     # MARKET CAP CHECK
     # =====================================================
 
-    market_cap = _calculate_market_cap(order, snapshot)
+    market_cap = _calculate_market_cap(order)
     if market_cap < MINIMUM_MARKET_CAP:
         reasons.append(
             f"market cap too low (${market_cap:,.0f} < ${MINIMUM_MARKET_CAP:,.0f})"
