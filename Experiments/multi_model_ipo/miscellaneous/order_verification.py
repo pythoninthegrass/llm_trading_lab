@@ -810,7 +810,6 @@ def _get_ipo_date(
 
 def _get_rejection_reasons(
     order: dict,
-    snapshot: dict,
 ) -> list[str]:
     reasons: list[str] = []
 
@@ -818,7 +817,7 @@ def _get_rejection_reasons(
     # IPO CHECK
     # =====================================================
 
-    ipo_date = snapshot.get("ipo_date")
+    ipo_date = _get_ipo_date(order)
     if ipo_date:
         age_days = _days_since(ipo_date, TODAY)
         if age_days is not None:
