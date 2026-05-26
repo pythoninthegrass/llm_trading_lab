@@ -793,7 +793,20 @@ def _calculate_market_cap(
             price = 0.0
 
         return share_count * price
+    
+def _get_ipo_date(
+    order: dict,
+) -> str:
+    ticker = order.get("ticker", None)
 
+    if ticker is None:
+        return "UNKNOWN"
+
+    ticker_data = fmp_endpoint("profile", ticker)
+    ipo_date = ticker_data.get("ipoDate", None)
+    if ipo_date is None:
+        return "UNKNOWN"
+    return ipo_date
 
 def _get_rejection_reasons(
     order: dict,
