@@ -168,50 +168,6 @@ def _days_since(value: Any, today: _dt.date) -> int | None:
     return (today - d).days
 
 
-def _unique_tickers(items) -> list[str]:
-    seen = set()
-    out = []
-    for t in items:
-        t = _normalize_ticker(t)
-        if not t or t in seen:
-            continue
-        seen.add(t)
-        out.append(t)
-    return out
-
-
-def _get_yfinance_fallback(ticker: str) -> dict:
-    """
-    Last-resort fallback, used only when reference/fundamental data is missing.
-    Kept intentionally narrow to avoid extra API calls.
-    """
-    ticker = _normalize_ticker(ticker)
-    if not ticker:
-        return {}
-
-    out: dict[str, Any] = {}
-
-    try:
-        fast = yf.Ticker(ticker).fast_info
-        out["market_cap"] = _safe_float(fast.get("market_cap"))
-        out["volume"] = _safe_int(fast.get("lastVolume") or fast.get("volume"))
-    except Exception:
-        pass
-
-    try:
-        info = yf.Ticker(ticker).info
-        if "shares_outstanding" not in out:
-            out["shares_outstanding"] = _safe_float(info.get("sharesOutstanding"))
-        if "ipo_date" not in out:
-            out["ipo_date"] = _parse_date(
-                info.get("ipoDate") or info.get("firstTradeDateEpochUtc")
-            )
-    except Exception:
-        pass
-
-    return out
-
-
 # =========================================================
 # VALIDATION
 # =========================================================
