@@ -14,25 +14,14 @@ def _request_json(
     api_key: str | None,
 ) -> dict | list | None:
 
-    global _last_polygon_call
-    global _last_fmp_call
-
     if not api_key:
         return None
 
     params = dict(params)
 
-    is_polygon = "polygon.io" in url
-    is_fmp = "financialmodelingprep.com" in url
 
-    if is_polygon:
-        params.setdefault("apiKey", api_key)
-    else:
-        params.setdefault("apikey", api_key)
-
-    is_polygon = "polygon.io" in url
-    is_fmp = "financialmodelingprep.com" in url
-
+    params.setdefault("apikey", api_key)
+    
     try:
 
         resp = session.get(url, params=params)
@@ -242,4 +231,5 @@ def enrich_company(ticker: str):
     }
 
 if __name__ == "__main__":
-    print(get_ipos("2025-06-25", "2026-07-21"))
+    print(get_fmp_data("AAPL"))
+    # print(get_ipos("2025-06-25", "2026-07-21"))
