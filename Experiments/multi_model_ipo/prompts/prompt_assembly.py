@@ -1,6 +1,6 @@
 from ..prompt_orchestration.main_functions import *
-from ..prompts.deep_research_prompt import *
-from ..prompts.daily_prompt import *
+from .deep_research_prompt import *
+from .daily_prompt import *
 
 
 
