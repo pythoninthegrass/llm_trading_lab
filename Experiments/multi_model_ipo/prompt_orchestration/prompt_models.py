@@ -44,6 +44,24 @@ def prompt_chatgpt(text: str, model: str = "gpt-4.1-mini") -> str:
 
     return content
 
+def prompt_grok(text: str, model: str) -> str:
+
+    client = OpenAI(
+    api_key=os.environ["XAI_API_KEY"],
+    base_url="https://api.x.ai/v1",
+)
+    response = client.responses.create(
+        model=model,
+        input=[
+            {"role": "user", "content": text},
+        ],
+    )
+    if response is None:
+        raise RuntimeError("Response from Grok was None.")
+    if not response.output_text:
+        raise RuntimeError("Output text from Grok was None.")
+    return response.output_text
+
 def prompt_deep_research(skeleton, libb) -> tuple[str, str]:
 
     model = libb._model_path.replace("multi_model_ipo/artifacts/", "")
