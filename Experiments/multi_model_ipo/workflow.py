@@ -29,8 +29,10 @@ def weekly_flow(date):
         deep_research_report, prompt = prompt_deep_research(prompt_skeleton, libb)
         libb.save_prompt(prompt)
         libb.save_deep_research(deep_research_report)
-
-        orders_json = parse_json(deep_research_report, "ORDERS_JSON")
+        try:
+            orders_json = parse_json(deep_research_report, "ORDERS_JSON")
+        except:
+            orders_json = json.loads("{ 'orders': [] }")
 
         filtered_orders, rejected_orders = filter_orders(orders_json)
         if rejected_orders:
@@ -53,7 +55,10 @@ def daily_flow(date):
         libb.analyze_sentiment(daily_report, report_type="daily_report")
         libb.save_daily_update(daily_report)
 
-        orders_json = parse_json(daily_report, "ORDERS_JSON")
+        try:
+            orders_json = parse_json(daily_report, "ORDERS_JSON")
+        except:
+            orders_json = json.loads("{ 'orders': [] }")
 
         filtered_orders, rejected_orders = filter_orders(orders_json)
         if rejected_orders:
@@ -77,8 +82,11 @@ def starting_flow(date):
         libb.save_prompt(prompt)
         libb.analyze_sentiment(starting_report, report_type="starting_report")
         libb.save_deep_research(starting_report)
-
-        orders_json = parse_json(starting_report, "ORDERS_JSON")
+        
+        try:
+            orders_json = parse_json(starting_report, "ORDERS_JSON")
+        except:
+            orders_json = json.loads("{ 'orders': [] }")
 
         filtered_orders, rejected_orders = filter_orders(orders_json)
         if rejected_orders:
